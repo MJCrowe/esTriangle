@@ -1,0 +1,29 @@
+# Makefile for an ES utilties static library.
+
+# If cross-compiling, you may wish to set theœ following environment
+# variable to the root location of your 'sdk'
+# SDKSTAGE=/home/foo/raspberrypi
+
+SRC=ESShader.c ESTransform.c ESShapes.c ESUtil.c
+HEADERS=ESUtil.h
+OBJ=$(SRC:.c=.o)
+OUT=libesutils.a
+
+INCLUDES=-I$(SDKSTAGE)/opt/vc/include  -I$(SDKSTAGE)/opt/vc/include/interface/vcos/pthreads -I/opt/vc/include/interface/vmcs_host/linux
+
+CFLAGS+=-DSTANDALONE -D__STDC_CONSTANT_MACROS -D__STDC_LIMIT_MACROS -DTARGET_POSIX -D_LINUX -fPIC -DPIC -D_REENTRANT -D_LARGEFILE64_SOURCE -D_FILE_OFFSET_BITS=64 -U_FORTIFY_SOURCE -Wall -g -DHAVE_LIBOPENMAX=2 -DOMX -DOMX_SKIP64BIT -ftree-vectorize -pipe -DUSE_EXTERNAL_OMX -DHAVE_LIBBCM_HOST -DUSE_EXTERNAL_LIBBCM_HOST -DUSE_VCHIQ_ARM -Wno-psabi
+
+CFLAGS+=-DRPI_NO_X
+
+# LIBS=-L$(SDKSTAGE)/opt/vc/lib -lGLESv2 -lEGL -lm -lbcm_host
+
+all: $(OUT)
+
+.c.o:
+	$(CC) -c $(INCLUDES) $(CFLAGS) $<
+
+$(OUT): $(OBJ)
+	ar rcs $(OUT) $(OBJ)
+
+clean:
+	rm -f *.o *.a *~
